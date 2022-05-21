@@ -1,0 +1,67 @@
+@implements IAsyncDisposable
+
+@inject IJSRuntime JS
+
+<CascadingValue Value=this>
+	@ChildContent
+</CascadingValue>
+
+@code {
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	[Parameter]
+	public string RootMargin { get; set; } = "0px";
+
+	[Parameter]
+	public double[]? Threshold { get; set; }
+
+	[Parameter]
+    public EventCallback<(string? targetName, double ratio)> OnIntersectionChangedCallback { get; set; }
+
+	IJSObjectReference? module;
+	IJSObjectReference? intersectionObserver;
+
+	private List<ElementReference> targetElements = new();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (!firstRender)
+		{
+			return;
+		}
+
+		module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor.IntersectionObserver/IntersectionObserver.razor.js");
+
+		intersectionObserver = await module.InvokeAsync<IJSObjectReference>("construct", new
+		{
+			RootMargin = RootMargin,
+			Threshold = Threshold 
+		});
+
+		foreach (var targetElement in targetElements)
+		{
+			await intersectionObserver!.InvokeVoidAsync("observe", targetElement);
+		}
+	}
+
+	public void Observe(ElementReference targetElement)
+	{
+		targetElements.Add(targetElement);
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		if (intersectionObserver is not null)
+		{
+			await intersectionObserver.InvokeVoidAsync("disconnect");
+
+			await intersectionObserver.DisposeAsync();
+		}
+
+		if (module is not null)
+		{
+			await module.DisposeAsync();
+		}
+	}
+}

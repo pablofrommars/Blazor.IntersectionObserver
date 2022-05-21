@@ -1,0 +1,65 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "dotnet: build",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build",
+				"${workspaceFolder}/src/Blazor.IntersectionObserver/Blazor.IntersectionObserver.csproj"
+			],
+			"problemMatcher": "$msCompile"
+		},
+		{
+			"label": "dotnet: pack",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"pack",
+				"--configuration",
+				"release",
+				"--output",
+				"${workspaceFolder}/packages",
+				"${workspaceFolder}/src/Blazor.IntersectionObserver/Blazor.IntersectionObserver.csproj"
+			],
+			"problemMatcher": "$msCompile",
+			"presentation": {
+				"echo": true,
+				"revealProblems": "onProblem",
+				"focus": false,
+				"panel": "dedicated",
+				"showReuseMessage": true,
+				"clear": false,
+				"close": true
+			}
+		},
+		{
+			"label": "nuget: push",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"nuget",
+				"push",
+				"${input:package}",
+				"--skip-duplicate",
+				"--api-key",
+				"${env:NUGET_API_KEY}",
+				"--source",
+				"https://api.nuget.org/v3/index.json"
+			],
+			"options": {
+				"cwd": "packages"
+			},
+			"problemMatcher": "$msCompile"
+		}
+	],
+	"inputs": [
+		{
+			"id": "package",
+			"type": "promptString",
+			"description": "Package file(s)",
+			"default": "*.nupkg"
+		}
+	]
+}

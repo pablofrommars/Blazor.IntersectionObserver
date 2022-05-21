@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <Authors>Pablo Belin</Authors>
+    <Title>Blazor.IntersectionObserver</Title>
+    <Description>Simple Blazor class library exposing the Intersection Observer API.</Description>
+    <Copyright>Copyright (c) 2022 Pablo Belin</Copyright>
+    <PackageTags>dotnet;dotnetcore;csharp;blazor;server;wasm</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/pablofrommars/Blazor.IntersectionObserver</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/pablofrommars/Blazor.IntersectionObserver</RepositoryUrl>
+
+    <Version>1.0.0</Version>
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>

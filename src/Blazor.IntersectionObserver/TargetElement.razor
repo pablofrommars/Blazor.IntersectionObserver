@@ -1,0 +1,39 @@
+<div @ref=@targetElement @onintersectionchanged=@OnIntersectionChanged>
+	@ChildContent
+</div>
+
+@code {
+	[CascadingParameter]
+	public IntersectionObserver? Observer { get; set; }
+
+	[Parameter]
+	public string? Name { get; set; }
+	
+	[Parameter]
+	public EventCallback<(TargetElement target, double ratio)>? OnIntersectionChangedCallback { get; set; }
+
+	[Parameter]
+	public RenderFragment? ChildContent { get; set; }
+
+	ElementReference targetElement;
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (!firstRender)
+		{
+			return;
+		}
+
+		Observer!.Observe(targetElement);
+	}
+
+	private Task OnIntersectionChanged(IntersectionChangedEventArgs args)
+	{
+		if (OnIntersectionChangedCallback is not null)
+		{
+			return OnIntersectionChangedCallback.Value.InvokeAsync((this, args.Ratio));
+		}
+
+		return Observer!.OnIntersectionChangedCallback.InvokeAsync((this.Name, args.Ratio));
+	}
+}
