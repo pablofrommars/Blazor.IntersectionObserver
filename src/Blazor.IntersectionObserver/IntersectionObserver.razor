@@ -17,7 +17,7 @@
 	public double[]? Threshold { get; set; }
 
 	[Parameter]
-    public EventCallback<(string? targetName, double ratio)> OnIntersectionChangedCallback { get; set; }
+	public EventCallback<(string? targetName, double ratio)> OnIntersectionChangedCallback { get; set; }
 
 	IJSObjectReference? module;
 	IJSObjectReference? intersectionObserver;
@@ -26,22 +26,28 @@
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (!firstRender)
+		if (!firstRender || module is not null)
 		{
 			return;
 		}
 
-		module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor.IntersectionObserver/IntersectionObserver.razor.js");
-
-		intersectionObserver = await module.InvokeAsync<IJSObjectReference>("construct", new
+		try
 		{
-			RootMargin = RootMargin,
-			Threshold = Threshold 
-		});
+			module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/Blazor.IntersectionObserver/IntersectionObserver.razor.js");
 
-		foreach (var targetElement in targetElements)
-		{
-			await intersectionObserver!.InvokeVoidAsync("observe", targetElement);
+			intersectionObserver = await module.InvokeAsync<IJSObjectReference>("construct", new
+			{
+				RootMargin = RootMargin,
+				Threshold = Threshold
+			});
+
+			foreach (var targetElement in targetElements)
+			{
+				await intersectionObserver!.InvokeVoidAsync("observe", targetElement);
+			}
+		}
+		catch (Exception)
+		{ 
 		}
 	}
 
@@ -54,14 +60,25 @@
 	{
 		if (intersectionObserver is not null)
 		{
-			await intersectionObserver.InvokeVoidAsync("disconnect");
-
-			await intersectionObserver.DisposeAsync();
+			try
+			{
+				await intersectionObserver.InvokeVoidAsync("disconnect");
+				await intersectionObserver.DisposeAsync();
+			}
+			catch (Exception)
+			{
+			}
 		}
 
 		if (module is not null)
 		{
-			await module.DisposeAsync();
+			try
+			{
+				await module.DisposeAsync();
+			}
+			catch (Exception)
+			{
+			}
 		}
 	}
 }

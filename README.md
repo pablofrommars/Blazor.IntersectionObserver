@@ -8,7 +8,7 @@ Simple Blazor class library exposing the [Intersection Observer API](https://dev
 
 # Installation
 
-You should install [Blazor.IntersectionObserver with NuGet](https://www.nuget.org/packages/Blazor.IntersectionObserver):
+Install [Blazor.IntersectionObserver with NuGet](https://www.nuget.org/packages/Blazor.IntersectionObserver):
 
     Install-Package Blazor.IntersectionObserver
     
@@ -18,7 +18,7 @@ Or via the .NET Core command line interface:
 
 # Configuration
 
-Register the library in wwwroot/index.html (Blazor WebAssembly) or Pages/_Layout.cshtml (Blazor Server) immediately after the Blazor `<script>`:
+Register the library in wwwroot/index.html (Blazor WebAssembly) or Pages/_Layout.cshtml (Blazor Server) immediately after the Blazor `<script>`. Do not skip this, it is required to handle the custom event `intersectionchange`):
 
 ```html
 <script src="./_content/Blazor.IntersectionObserver/blazor.intersectionObserver.js" />
@@ -26,31 +26,33 @@ Register the library in wwwroot/index.html (Blazor WebAssembly) or Pages/_Layout
 
 # Usage
 
+`OnIntersectionChangedCallback` can be set on `IntersectionObserver` or `TargetElement` individual components.
+
 ```html
 @using Blazor.IntersectionObserver;
 
 <IntersectionObserver
 	Threshold=@(new[] { 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 })
+	RootMargin="0px" //Optional
 	OnIntersectionChangedCallback=@OnIntersectionChanged>
 
-	<div class="h-[2000px] bg-red-100"></div>
-
 	<TargetElement Name="target1">
-		<h1>target1</h1>
+		<div class="h-[2000px] bg-red-100">
+			<h1>Target 1</h1>
+		</div>
 	</TargetElement>
-
-	<div class="h-[2000px] bg-blue-100"></div>
 
 	<TargetElement Name="target2">
-		<h1>target2</h1>
+		<div class="h-[1000px] bg-green-100">
+			<h1>Target 2</h1>
+		</div>
 	</TargetElement>
-
-	<div class="h-[2000px] bg-green-100"></div>
 
 	<TargetElement Name="target3">
-		<h1>target3</h1>
+		<div class="h-[3000px] bg-blue-100">
+			<h1>Target 3</h1>
+		</div>
 	</TargetElement>
-
 </IntersectionObserver>
 ```
 
@@ -59,7 +61,7 @@ Register the library in wwwroot/index.html (Blazor WebAssembly) or Pages/_Layout
 @code {
 	void OnIntersectionChanged((string? targetName, double ratio) args)
 	{
-		...
+		// Your code executes when your target elements cross the thresholds
 	}
 }
 ```
