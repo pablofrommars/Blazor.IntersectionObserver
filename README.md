@@ -61,7 +61,7 @@ Register the library in wwwroot/index.html (Blazor WebAssembly) or Pages/_Layout
 @code {
 	void OnIntersectionChanged((string? targetName, double ratio) args)
 	{
-		// Your code executes when your target elements cross the thresholds
+		// Your code executes when your target elements cross the thresholds on scroll
 	}
 }
 ```
